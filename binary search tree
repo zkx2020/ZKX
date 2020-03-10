@@ -1,0 +1,112 @@
+#include <iostream>
+
+using namespace std;
+//binary search tree й╣ож
+
+
+struct Node
+{
+    int data;
+    Node* left;
+    Node* right;
+};
+int x;
+int a;
+Node* root;
+
+
+Node* Insert(int data, Node* pointer)
+{
+    if(pointer == NULL)
+    {
+        pointer = new Node();
+        pointer -> data = data;
+        pointer -> left = NULL;
+        pointer -> right = NULL;
+    }
+    else if(data <= pointer -> data)
+    {
+        pointer -> left = Insert(data, pointer -> left);
+    }
+    else if(data > pointer -> data)
+    {
+        pointer -> right = Insert(data, pointer -> right);
+    }
+    return pointer;
+}
+
+bool Search(Node* pointer, int data)
+{
+    if(pointer == NULL)
+    {
+        return false;
+
+    }
+    else if(data == pointer -> data)
+    {
+        return true;
+
+    }
+    else if(data < pointer -> data)
+    {
+        Search(pointer -> left, data);
+    }
+    else if(data > pointer -> data)
+    {
+        Search(pointer -> right, data);
+    }
+}
+
+
+void judgeMAX(Node* pointer)
+{
+    if(pointer -> right != NULL)
+    {
+        judgeMAX(pointer -> right);
+    }
+    if(pointer -> right == NULL)
+    {
+         cout << "MAX:" << pointer -> data << endl;
+    }
+}
+
+void judgeMIN(Node* pointer)
+{
+    if(pointer -> left != NULL)
+    {
+        judgeMIN(pointer -> left);
+    }
+    if(pointer -> left == NULL)
+    {
+         cout << "MIN:" << pointer -> data;
+    }
+}
+
+int main()
+{
+    root = NULL;
+    for(int i = 0; i < 5; i++)
+    {
+        cout << "Enter a number " << i + 1 << endl;
+        cin >> x;
+        root = Insert(x, root);
+    }
+    /*begin:cout << "Enter a number you want to find" << endl;
+    cin >> a;
+    if (Search(root, a))
+    {
+        cout << "Find" << endl;
+    }
+    else
+        cout << "not Find" << endl;
+    goto begin;*/
+
+    judgeMAX(root);
+
+    judgeMIN(root);
+
+
+
+
+    return 0;
+}
