@@ -1,0 +1,277 @@
+//why so difficult
+#include <iostream>
+
+using namespace std;
+//这里写不出来红黑树，因为judge部分复杂且没办法测试，目前写出了二叉搜索及后续遍历，以后有时间再写吧。
+//好吧，两天时间写出来了，红黑树插入函数。
+enum RBTcolor{red, black};
+//创建结构体
+
+struct rtree
+{
+    int data;
+    RBTcolor color;
+    rtree* left;
+    rtree* right;
+    rtree* parent;
+};
+//创建根指针、哨兵指针
+rtree* root;
+rtree* SB;
+
+//哨兵节点创建
+rtree* sb()
+{
+    SB = new rtree();
+    SB -> color = black;
+    return SB;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//再平衡函数-右旋
+rtree* youX(rtree* pointer)
+{   //如果父节点是红色且叔节点是黑色
+    if(pointer -> parent -> color == red && pointer -> parent -> parent -> right -> color == black && pointer == pointer -> parent -> left)
+    {   //修正颜色
+        pointer -> parent -> color = black;
+        pointer -> parent -> parent -> color = red;
+        //将当前节点父节点右孩子给到祖父节点左孩子
+        pointer -> parent -> parent -> left = pointer -> parent -> right;
+        //将父节点右孩子变成祖父节点(这里注意是双向的)
+        pointer -> parent -> right -> parent = pointer -> parent -> parent;
+        pointer -> parent -> right = pointer -> parent -> parent;
+        //将祖父节点的父亲赋值给父节点的父亲
+        pointer -> parent -> parent = pointer -> parent -> parent -> parent;
+        //判断父节点的新父节点
+        if(pointer -> parent -> parent == SB)
+            root = pointer -> parent;
+        else
+        {
+            if(pointer -> parent -> right == pointer -> parent -> parent -> left)
+                pointer -> parent -> parent -> left = pointer -> parent;
+            else if(pointer -> parent -> right == pointer -> parent -> parent -> right)
+                pointer -> parent -> parent -> right = pointer -> parent;
+        }
+        //将父节点赋值给祖父节点的父亲
+        pointer -> parent -> right -> parent = pointer -> parent;
+
+
+        //上述pointer -> parent可以用y代替简洁很多。当你要不断引用一个数据时你最好把该数据简化。
+    }
+    return pointer;
+}
+//再平衡函数-左旋
+rtree* zuoX(rtree* pointer)
+{   //如果父节点是红色且叔节点是黑色
+    if(pointer -> parent -> color == red && pointer -> parent -> parent -> left -> color == black && pointer == pointer -> parent -> right)
+    {   //修正颜色
+        pointer -> parent -> color = black;
+        pointer -> parent -> parent -> color = red;
+        //将当前节点父节点右孩子给到祖父节点左孩子
+        pointer -> parent -> parent -> right = pointer -> parent -> left;
+        //将父节点右孩子变成祖父节点(这里注意是双向的)
+        pointer -> parent -> left -> parent = pointer -> parent -> parent;////这步遗漏了
+        pointer -> parent -> left = pointer -> parent -> parent;
+        //将祖父节点的父亲赋值给父节点的父亲
+        pointer -> parent -> parent = pointer -> parent -> parent -> parent;
+        //判断父节点的新父节点
+        if(pointer -> parent -> parent == SB)
+            root = pointer -> parent;
+        else
+        {
+            if(pointer -> parent -> left == pointer -> parent -> parent -> left)
+                pointer -> parent -> parent -> left = pointer -> parent;
+            else if(pointer -> parent -> left == pointer -> parent -> parent -> right)
+                pointer -> parent -> parent -> right = pointer -> parent;
+        }
+        //将父节点赋值给祖父节点的父亲
+        pointer -> parent -> left -> parent = pointer -> parent;
+
+        //上述pointer -> parent可以用y代替简洁很多。当你要不断引用一个数据时你最好把该数据简化。
+    }
+    return pointer;
+}
+
+//左右旋特殊情况
+rtree* LR(rtree* pointer)
+{
+    if(pointer -> parent -> color == red && pointer -> parent -> parent -> right -> color == black && pointer == pointer -> parent -> right && pointer -> parent == pointer -> parent -> parent -> left)
+    {
+        pointer -> parent -> right = pointer -> left;
+        pointer -> left = pointer -> parent;
+        pointer -> parent -> parent -> left = pointer;
+        pointer -> parent = pointer -> parent -> parent;
+        pointer -> left -> parent = pointer;
+        pointer = pointer -> left;
+        return pointer;
+    }
+    else if(pointer -> parent -> color == red && pointer -> parent -> parent -> left -> color == black && pointer == pointer -> parent -> left && pointer -> parent == pointer -> parent -> parent -> right)
+    {
+        pointer -> parent -> left = pointer -> right;
+        pointer -> right = pointer -> parent;
+        pointer -> parent -> parent -> right = pointer;
+        pointer -> parent = pointer -> parent -> parent;
+        pointer -> right -> parent = pointer;
+        pointer = pointer -> right;
+        return pointer;
+    }
+    else
+        return pointer;
+
+}
+
+//变色
+void rootR(rtree* pointer)
+{
+    if(pointer -> parent == SB)
+        pointer -> color = black;
+}
+
+rtree* uncleR(rtree* pointer)
+{
+    if(pointer -> parent != SB && pointer -> parent -> parent != SB)//这一步不能缺，要保证pointer有uncle的情况
+    {
+        if(pointer-> parent == pointer -> parent -> parent -> left && pointer -> parent -> color == red && pointer -> parent -> parent -> right -> color == red)
+        {//上面的if第一个要记得添加，不然计算机分不清左右。
+            pointer -> parent -> color = black;
+            if(pointer -> parent -> parent != root)
+            {
+                pointer -> parent -> parent -> color = red;
+            }
+            pointer -> parent -> parent -> right -> color = black;
+            pointer = pointer -> parent -> parent;
+
+            return pointer;
+        }
+        else if(pointer -> parent == pointer -> parent -> parent -> right && pointer -> parent -> color == red && pointer -> parent -> parent -> left -> color == red)
+        {
+            pointer -> parent -> color = black;
+            if(pointer -> parent -> parent != root)
+            {
+                pointer -> parent -> parent -> color = red;
+            }
+            pointer -> parent -> parent -> left -> color = black;
+            pointer = pointer -> parent -> parent;
+            return pointer;
+        }
+        else
+            return pointer;
+    }else
+        return pointer;
+
+}
+//再平衡函数集合
+void balance(rtree* pointer)
+{
+    rootR(pointer);
+    while(pointer -> color == red && pointer -> parent -> color == red)
+    {
+        pointer = uncleR(pointer);
+        pointer = LR(pointer);
+        pointer = zuoX(pointer);
+        pointer = youX(pointer);
+    }
+
+
+
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//现在的目标是找到当前插入节点的地址，所以必须要创建一个search函数出来。
+rtree* searchRBT(int data, rtree* pointer)
+{
+    if(pointer -> data == data)
+        return pointer;
+    else if(data <= pointer -> data)
+    {
+        searchRBT(data, pointer -> left);
+    }
+    else if(data > pointer -> data)
+        searchRBT(data, pointer -> right);
+
+}//这里return返回值在递归过程中没有变化。
+
+
+//printing function(后序遍历）
+void coutfunc(rtree* pointer)
+{
+    if(pointer == SB)
+        return;
+    cout << "adress: " << pointer << endl;
+    cout << "color: " << pointer -> color << endl;
+    cout << "data: " << pointer -> data << endl;
+    cout << "left: " << pointer -> left << endl;
+    cout << "right: " << pointer -> right << endl;
+    cout << "parent: " << pointer -> parent << endl;
+    cout << endl;
+
+    coutfunc(pointer -> left);
+    coutfunc(pointer -> right);
+}
+
+
+
+//数值插入形成二叉搜索树函数
+rtree* Insert(int data, rtree* pointer, rtree* p) //这里的p是帮助定义父节点。
+{
+        //创建一个节点，节点包含de内容
+        if(pointer == SB)
+        {
+            pointer = new rtree();
+            pointer -> data = data;
+            pointer -> left = SB;
+            pointer -> right = SB;
+            pointer -> parent = p;
+            pointer -> color = red;
+            if(pointer -> parent == SB)
+                root = pointer;
+            return pointer;
+        }
+
+        else if(pointer != SB)
+        {
+            if(data <= pointer -> data)
+            {
+                pointer -> left = Insert(data, pointer -> left, pointer);
+                return pointer;
+
+            }
+
+            else if(data > pointer -> data)
+            {
+                pointer -> right = Insert(data, pointer -> right, pointer);
+            }
+        }
+
+}
+
+////////红黑树插入函数
+void insertRBT(int data)//这里不用设置指针，因为root固定了。
+{
+        Insert(data, root, root);
+        balance(searchRBT(data, root));
+}
+//测试函数
+int main()
+{
+    int a;
+    int b;
+    SB = sb();
+    root = SB;
+    //交互
+    cout << "how many number you want to store?" << endl;
+    cin >> a;
+    for(int i = 1; i <= a; i++)
+    {
+        cout << "Please enter number " << i << endl;
+        cin >> b;
+        insertRBT(b);
+    }
+    cout << endl;
+    //遍历
+    coutfunc(root);
+
+    return 0;
+}
+
