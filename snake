@@ -1,0 +1,198 @@
+//first project, snake game
+
+#include <iostream>
+#include <iostream>
+#include <conio.h>
+#include <stdlib.h>
+#include <ctime>
+
+using namespace std;
+
+bool Lose;
+bool win;
+const int width = 70;
+const int height = 15;
+int x, y, foodX, foodY, score;
+enum Direction{STOP = 0, UP, DOWN, LEFT, RIGHT};
+Direction dir;
+int Xp[100], Yp[100];
+int ntail = 0;
+
+
+void Begin(){
+    Lose = false;
+    win = false;
+    x = width / 2;
+    y = height / 2;
+    srand(time(0));
+    foodX != 0;
+    foodX != width - 1;
+    foodX = rand() % width;
+    foodY = rand() % height;
+    score = 0;
+    cout << "Thank you to play this game!\nThis is the first game that I make,\nI hope you will enjoy it!\nPlease Enter any button to continue";
+    getch();
+
+}
+
+void Pic(){
+    system("cls");
+    //Create a matrix first
+    bool tom = false;
+    //first 创造一个宽为width（20）的行。
+    for(int i = 0; i < width; i++){
+
+        cout << "$";
+
+    }
+        cout << endl;
+
+    //middle 创造一个height为height+2的列。
+    for(int i = 0; i < height; i++){
+        for(int j = 0; j < width; j++){
+            if(j == 0 || j == width - 1){
+                cout << "$";
+            }
+            //create a the head of snake and the food;
+            else if(j == x && i == y){
+                cout << "@";
+            }
+            else if(j == foodX && i == foodY){
+                cout << "O";
+            }
+
+            else{
+                bool print = false;
+                for(int k = 0; k < ntail; k++){
+                    if(i == Yp[k] && j == Xp[k])
+                    {
+                        cout << "o";
+                        print = true;
+                    }
+                }
+                if(!print)
+                    cout << " ";
+            }
+        }
+
+         cout << endl;
+
+    }
+
+
+    //Last
+    for(int i = 0; i < width; i++){
+
+        cout << "$";
+
+    }
+        cout << endl;
+
+
+    cout << "Your score: " << score << endl;
+    cout << "Tail Number: " << ntail;
+
+}
+
+
+void Intera(){
+
+
+    for(int i = ntail; i > 0; i--){
+        Xp[i] = Xp[i - 1];
+        Yp[i] = Yp[i - 1];
+    }
+    Xp[0] = x;
+    Yp[0] = y;
+
+    if(_kbhit()){
+        switch(getch()){
+        case 'w' :
+            dir = UP;
+            break;
+        case 's' :
+            dir = DOWN;
+            break;
+        case 'a' :
+            dir = LEFT;
+            break;
+        case 'd' :
+            dir = RIGHT;
+            break;
+
+
+        }
+    }
+
+    switch(dir){
+        case UP :
+            y--;
+            break;
+        case DOWN :
+            y++;
+            break;
+        case LEFT :
+            x--;
+            break;
+        case RIGHT :
+            x++;
+            break;
+        default:
+            break;
+    }
+    //eat the food
+
+    if(x == foodX && y == foodY){
+        foodX = rand() % width;
+        foodY = rand() % height;
+        score += 10;
+        ntail++;
+    }
+
+    //meet the block
+    if(x < 0){
+        Lose = true;
+    }else if(x >= width){
+        Lose = true;
+    }else if(y < 0){
+        Lose = true;
+    }else if(y >= height){
+        Lose = true;
+    }
+    //check the tail
+    for(int i = 0; i < ntail; i++)
+    {
+    if(x == Xp[i] && y == Yp[i])
+        Lose = true;
+    }
+
+
+    if(score == 2000)
+        win = true;
+
+}
+
+
+int main()
+{
+    Begin();
+    while(!Lose && !win){
+
+        Pic();
+        Intera();
+    }
+        if(win){
+            system("cls");
+            cout << "You win the game,very Thanks for playing!!!!!!!!!!!!!!!!you are so awesome!" << endl;
+            getch();
+        }
+        else if(Lose){
+        system("cls");
+        cout << "You lose the game,please try again." << endl;
+            getch();
+
+        }
+
+
+    return 0;
+}
