@@ -1,0 +1,224 @@
+////////////////////Linked List
+#include <iostream>
+
+using namespace std;
+
+//创建一个结构体
+struct node
+{
+    int data;
+    node* next;
+};
+
+//全局变量设置
+node* head, *temp, *temp1;
+int n, datain, Nset, IO, x;
+
+void fresh()//更新函数
+{
+    temp = new node();
+}
+
+void print()//输出函数
+{
+     node* printp = head;
+     for(int i = 0; i < n; i++)
+    {
+        cout << "(" << i+1 << ")" << printp -> data << " ";
+        printp = printp -> next;
+    }cout << endl;
+
+}
+
+void insertarr()//创建一个list
+{
+    cout << "how many numbers do you want to store?" << endl;
+    cin >> n;
+    //i = 1;
+    cout << "please enter number 1" << endl;
+    cin >> datain;
+    temp -> data = datain;
+    temp -> next = NULL;
+    head = temp;
+    //recycle 2->
+    for(int i = 2; i <= n; i++)
+    {   cout << "please enter number " << i << endl;
+        cin >> datain;
+        fresh();
+        temp -> data = datain;
+        temp -> next = NULL;
+        //create a new pointer
+        node* temp1 = head;
+        while(temp1 -> next != NULL)
+        {
+            temp1 = temp1 -> next;
+        }temp1 -> next = temp;
+    }
+    print();
+}
+
+
+void newin()//添加一个新的数字
+{
+    cout << "Which position behind do you want to set?" << endl;
+    cin >> Nset;
+    n++;
+    cout << "Set your number:" << endl;
+    cin >> datain;
+    fresh();
+    if(Nset == 0)
+    {
+        temp -> data = datain;
+        temp -> next = head;
+        head = temp;
+        print();
+    }
+    else
+    {
+        node* tempI = head;
+        for(int i = 0; i < Nset - 1; i++)
+        {
+            tempI = tempI -> next;
+        }
+        //temp节点的数据变化
+        temp -> data = datain;
+        temp -> next = tempI -> next;
+        //Nset pointer change
+        tempI -> next = temp;
+        print();
+
+    }
+}
+
+void cancel()
+{
+    cout << "Which position do you want to cancel?" << endl;
+    cin >> Nset;
+    n--;
+    node* tempC1 = head;
+    node* tempC2 = head;
+    if(Nset == 1)
+    {
+        head = head -> next;
+        delete tempC1;
+        print();
+    }
+    else
+    {
+        for(int i = 0; i < Nset - 2; i++)
+            {
+                tempC1 = tempC1 -> next;
+            }
+        tempC2 = tempC1 -> next;
+        tempC1 -> next = tempC2 -> next;
+        delete tempC2;
+        print();
+    }
+}
+
+void reversearr()
+{
+    if(n == 1)//这里记得不是赋值的=号！！犯了此错误三次！
+    {
+        print();
+    }
+    else
+    {
+        node* tempR = head -> next;
+        node* prev = head;
+        //这里犯了一个严重的错误，就是next修正了，所以prev无法跟随next跳跃到下一个地址。
+        //故这里要创造一个prevR储存起来那个值。
+        node* prevR = head;
+
+        while(tempR -> next != NULL)
+            {
+                prevR = tempR;
+                tempR = tempR -> next;
+                prevR -> next = prev;
+                prev = prevR;
+            }
+
+        tempR -> next = prev;
+        head -> next = NULL;
+        head = tempR;
+
+        print();
+
+    }
+
+}
+//--------------------------------------------------------stack
+int push(int a)
+{
+    return a;
+}
+void pop()
+{
+    node* pop0 = head;
+    head = head -> next;
+    delete pop0;
+    n--;
+    print();
+
+}
+
+void top()
+{
+    cout << head -> data << endl;
+}
+
+void stack0()
+{
+    cout << "push" << endl;
+    cin >> x;
+    fresh();
+    temp -> data = push(x);
+    temp -> next = head;
+    head = temp;
+    n++;
+    print();
+
+}
+
+//--------------------------------------------------------stack
+
+
+
+void choose()
+{begin:
+    cout << endl;
+    cout << "INPUT(1) or OUTPUT(0) or REVERSE(2) or push(3) or pop(4) or top(5)?" << endl;
+    cin >> IO;
+    cout << endl;
+    if(IO == 1)
+        newin();
+    else if (IO == 0)
+        cancel();
+    else if(IO == 2)
+        reversearr();
+    else if(IO == 3)
+        stack0();
+    else if(IO == 4)
+        pop();
+    else if(IO == 5)
+        top();
+    goto begin;
+}
+
+
+int main()
+{
+    head = NULL;
+    fresh();
+    insertarr();
+    choose();
+
+
+
+
+
+
+
+
+    return 0;
+}
