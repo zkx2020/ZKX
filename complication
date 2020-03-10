@@ -1,0 +1,230 @@
+#include <iostream>
+
+using namespace std;
+//排序算法！！
+/*
+int A[11] = {1, 5, -1, 9, 8, 2, 3, 15, 231, -233, 28};
+int comp;
+int j = sizeof(A)/sizeof(int);
+
+
+void sorting(int* A)
+{
+
+for(int i = 0; i < j - 1; i++)//A[5]是不存在的所以要注意i的范围！！
+{
+    while(i >= 0 && A[i] > A[i + 1])
+    {
+        comp = A[i + 1];
+        A[i + 1] = A[i];
+        A[i] = comp;
+        i--;
+    }
+}
+
+}
+
+void print()
+{
+    for(int i = 0; i < j; i++)
+    {
+        cout << A[i] << " ";
+    }
+}
+
+int main()
+{
+
+    sorting(A);
+    print();
+
+    return 0;
+}
+*/
+
+//好难！！但是完成了！！这个叫分治法，归并排序。
+
+/*
+
+int B[7] = {3, 5, 1, 7, 0, 20, 11};
+
+
+
+
+
+void mergesort(int* leftarr, int* rightarr, int* A, int n, int mid)
+{
+
+        int a, b, c;
+        a = b = c = 0;
+
+        while(a < mid && b < n - mid)
+        {
+            if(leftarr[a] <= rightarr[b])
+            {
+                A[c] = leftarr[a];
+                c++;
+                a++;
+            }
+            else if(leftarr[a] > rightarr[b])
+            {
+                A[c] = rightarr[b];
+                c++;
+                b++;
+            }
+        }
+        while(a < mid)
+        {
+            A[c] = leftarr[a];
+            c++;
+            a++;
+        }
+        while(b < n - mid)
+        {
+            A[c] = rightarr[b];
+            c++;
+            b++;
+        }
+}
+
+void Digui(int* A, int n)
+{
+    if(n < 2)
+        return;
+    else
+    {
+        int mid1 = n / 2;
+        //c++无法创建变量数组，要借用heap，比较麻烦。
+        int* leftA = new int[mid1];
+        int* rightA = new int[n - mid1];
+
+        for(int i = 0; i < mid1; i++)
+        {
+            leftA[i] = A[i];
+        }
+
+        for(int i = mid1; i < n; i++)
+        {
+            rightA[i - mid1] = A[i];
+        }
+        Digui(leftA, mid1);
+        Digui(rightA, n - mid1);
+        mergesort(leftA, rightA, A, n, mid1);
+    }
+}
+
+
+int main()
+{
+    int k = sizeof(B) / sizeof(int);
+    Digui(B, k);
+    for(int i = 0; i < k; i++)
+        cout << B[i] << " ";
+
+
+    return 0;
+}
+*/
+
+//quick sorting;快速排序,没想到看了一眼逻辑就能全程写出来，给个鼓励！
+/*
+int A[8] = {8, 7, 6, 5, 4, 3, 2, 1};
+int end1 = sizeof(A)/sizeof(int) - 1;
+int start = 0;
+
+
+
+void quick(int* A, int begin1, int endd)
+{
+
+    if(endd - begin1 <= 0)
+        return;
+
+    else
+    {
+        for(int i = begin1; i < endd; i++)
+        {
+            if(A[i] <= A[endd])
+            {
+                swap(A[i], A[begin1]);
+                begin1++;
+            }
+        }
+        swap(A[endd], A[begin1]);
+
+        quick(A, start, begin1 - 1);
+        quick(A, begin1 + 1, endd);
+
+    }
+
+
+}
+
+
+
+
+
+int main()
+{
+
+    quick(A, start, end1);
+    for(int i = 0; i < end1 + 1; i++)
+    {
+        cout << A[i] << " ";
+    }
+
+    return 0;
+}
+*/
+
+//斐波那契数列：两种算法的差异！
+/*
+int num = 47;
+int* A = new int[num];
+
+
+int fabo(int n)
+{
+    if(n == 0 || n == 1)
+        return n;
+    if(A[n] != -1)
+        return A[n];
+    else
+        A[n] = fabo(n - 1) + fabo(n - 2);
+        return A[n];
+}
+
+int fabo1(int n)
+{
+    if(n == 0 || n == 1)
+        return n;
+    else
+        return fabo1(n - 1) + fabo1(n - 2);
+
+}
+
+
+int main()
+{
+    for(int i = 0; i < num; i++)
+    {
+        A[i] = -1;
+    }
+    for(int i = 0; i < num; i++)
+        cout << fabo(i) << " ";
+    cout << endl;
+    for(int i = 0; i < num; i++)
+        cout << fabo1(i) << " ";
+
+
+    return 0;
+}
+*/
+
+int main()
+{
+
+
+
+    return 0;
+}
